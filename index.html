@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Roster Mate — 7-Week Roster</title>
+  <style>
+    :root{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      --bg:#f7f8fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e5e7eb;
+    }
+
+    html, body{
+      height:100%;
+      margin:0;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* BIG: use the screen */
+    body{
+      padding: 18px;
+    }
+
+    /* BIG: wide container */
+    .wrap{
+      max-width: 1400px;       /* was 980-ish */
+      margin: 0 auto;
+    }
+
+    header{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 16px 10px;
+      box-shadow: 0 8px 24px rgba(2,6,23,.06);
+    }
+
+    h1{
+      font-size: 28px;         /* BIG */
+      margin: 0 0 10px 0;
+      letter-spacing: -0.02em;
+    }
+
+    .toolbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap: 12px;
+      padding: 8px 0 6px;
+    }
+
+    .toolbar-left,
+    .toolbar-mid,
+    .toolbar-right{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap:wrap;
+    }
+
+    /* BIG: buttons */
+    .btn{
+      padding: 10px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      background: #ffffff;
+      cursor: pointer;
+      font-size: 14px;         /* BIG */
+      font-weight: 700;
+      line-height: 1;
+      box-shadow: 0 2px 10px rgba(2,6,23,.05);
+    }
+    .btn:hover{
+      background: #f1f5ff;
+    }
+
+    /* BIG: date input */
+    input[type="date"]{
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      font-size: 14px;         /* BIG */
+      font-weight: 600;
+      background: #fff;
+      min-width: 210px;
+      box-shadow: 0 2px 10px rgba(2,6,23,.05);
+    }
+
+    .meta{
+      margin-top: 8px;
+      font-size: 14px;         /* BIG */
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    /* BIG legend */
+    .legend{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin: 14px 0 14px;
+    }
+    .legend span{
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      font-weight: 800;
+      font-size: 14px;
+      box-shadow: 0 2px 10px rgba(2,6,23,.05);
+    }
+
+    /* TABLE WRAP */
+    .tableCard{
+      margin-top: 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 8px 24px rgba(2,6,23,.06);
+      overflow: auto;
+    }
+
+    table{
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+      background: #fff;
+      min-width: 1050px; /* stops squishing on smaller screens; allows horizontal scroll */
+    }
+
+    /* BIG: cell sizing */
+    th, td{
+      border: 1px solid var(--border);
+      padding: 14px 10px;      /* BIG */
+      text-align: center;
+      font-size: 14px;         /* BIG */
+    }
+
+    /* Sticky header row (nice when scrolling) */
+    thead th{
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #f8fafc;
+    }
+
+    /* Sticky left name column */
+    .weekCol{
+      width: 220px;            /* BIG */
+      background: #eef2ff;
+      font-weight: 900;
+      text-align: left;
+      padding-left: 14px;
+      position: sticky;
+      left: 0;
+      z-index: 3;
+    }
+
+    /* Make the top-left corner also sticky above everything */
+    thead th:first-child{
+      position: sticky;
+      left: 0;
+      z-index: 4;
+      background: #eef2ff;
+    }
+
+    .code{
+      font-weight: 900;
+      display: block;
+      font-size: 15px;         /* BIG */
+      letter-spacing: 0.02em;
+    }
+
+    .times{
+      font-size: 12px;         /* BIG */
+      color: rgba(15,23,42,.75);
+      font-weight: 700;
+      margin-top: 4px;
+      display:block;
+    }
+
+    /* shift colours (kept your vibe) */
+    .shift-RDO { background: #fff; color: #111; }
+    .shift-EARLY { background: #ffb682; color: #fff; }
+    .shift-MID { background: #97b8ff; color: #fff; }
+    .shift-NIGHT { background: #ff8484; color: #fff; }
+
+    /* dialogs */
+    dialog{
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      width: min(980px, 96vw);  /* BIG */
+    }
+    dialog h3 { margin: 0 0 10px; font-size: 18px; }
+    dialog h4 { margin: 14px 0 8px; font-size: 15px; }
+
+    .row{
+      display:grid;
+      grid-template-columns: 220px 1fr;
+      gap: 12px;
+      align-items:center;
+      margin: 10px 0;
+    }
+
+    input[type="text"]{
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .dlgActions{
+      display:flex;
+      justify-content:flex-end;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    footer{
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    footer code{
+      background: #fff;
+      padding: 2px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 720px){
+      h1{ font-size: 22px; }
+      .weekCol{ width: 170px; }
+      table{ min-width: 980px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Roster Mate — 7-Week Roster</h1>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button id="editRosterBtn" class="btn">Edit roster</button>
+          <button id="editNamesBtn" class="btn">Edit names</button>
+        </div>
+
+        <div class="toolbar-mid">
+          <button id="prevWeekBtn" class="btn">← Previous</button>
+          <button id="thisWeekBtn" class="btn">This Week</button>
+          <button id="nextWeekBtn" class="btn">Next →</button>
+        </div>
+
+        <div class="toolbar-right">
+          <input id="jumpDate" type="date" title="Jump to any date (snaps to Monday of that week)" />
+        </div>
+      </div>
+
+      <div id="weekRange" class="meta"></div>
+
+      <div class="legend" id="legend"></div>
+    </header>
+
+    <div class="tableCard">
+      <table id="grid">
+        <colgroup>
+          <col class="weekCol" />
+          <col span="7" />
+        </colgroup>
+      </table>
+    </div>
+
+    <!-- Names Editor -->
+    <dialog id="namesDlg">
+      <form method="dialog" id="namesForm">
+        <h3>Assign names to roster weeks</h3>
+        <div id="namesGrid"></div>
+        <div class="dlgActions">
+          <button class="btn" id="cancelNames">Cancel</button>
+          <button class="btn" id="saveNames">Save</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Roster Editor -->
+    <dialog id="rosterDlg">
+      <form method="dialog" id="rosterForm">
+        <h3>Edit roster pattern & shifts</h3>
+        <div class="row">
+          <label for="anchor" style="font-weight:800;">Anchor (start of Week 1)</label>
+          <input id="anchor" type="date" />
+        </div>
+
+        <h4>Shift definitions</h4>
+        <table id="shiftTbl">
+          <thead><tr><th>Code</th><th>Label</th><th>Start</th><th>End</th></tr></thead>
+          <tbody></tbody>
+        </table>
+
+        <h4>7-week pattern (Mon–Sun per row)</h4>
+        <table id="patternTbl"></table>
+
+        <div class="dlgActions">
+          <button class="btn" id="cancelRoster">Cancel</button>
+          <button class="btn" id="saveRoster">Save</button>
+        </div>
+      </form>
+    </dialog>
+
+    <footer>
+      Data saves in your browser using <code>localStorage</code> (so it stays after refresh).
+    </footer>
+
+    <script src="app.js"></script>
+  </div>
+</body>
+</html>
